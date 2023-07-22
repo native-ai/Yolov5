@@ -17,22 +17,22 @@ config=[
 class SpatialPyramidPoolingWithFixedBins(nn.Module):
     def __init__(self, in_channels, out_channel, pool_sizes=[[5, 1, 2], [5, 1, 2], [5, 1, 2]]):
         super(SpatialPyramidPoolingWithFixedBins, self).__init__()
-        self.firstblock = ConvBNSiLUBlock(in_channels , out_channel=512, kernel_size=1, stride=1, padding=0)
+        self.firstblock = ConvBNSiLUBlock(in_channels , in_channels//2, kernel_size=1, stride=1, padding=0)
 
         self.maxpools = nn.ModuleList([nn.MaxPool2d(pool_size[0], pool_size[1], pool_size[2]) for pool_size in pool_sizes])
-        self.lastblock = ConvBNSiLUBlock(in_channels , out_channel= out_channel, kernel_size=1, stride=1, padding=0)
+        self.lastblock = ConvBNSiLUBlock(in_channels * 2, in_channels, kernel_size=1, stride=1, padding=0)
 
     def forward(self, x):
         features=[]
         out=self.firstblock(x)
-        out_copy= out
+        features.append(out)
+
         for maxpool in self.maxpools:
             out=maxpool(out)
             features.append(out)
 
-        features = [maxpool(x) for maxpool in self.maxpools[::-1]]
-        features = torch.cat(features + [out_copy], dim=1)
-        # features = self.lastblock(features)
+        features = torch.cat(features, dim=1)
+        features = self.lastblock(features)
         return features
 
 class ConvBNSiLUBlock(nn.Module):
