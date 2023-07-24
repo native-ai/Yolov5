@@ -1,8 +1,9 @@
 import numpy as np
 import torch
 import torch.nn as nn
+import config
 
-config = [
+config1= [
     [6, 2, 2, 64, False],
     [3, 2, 1, 128, False],
     ("c3", 3, [1, 1, 0, 128, False], False, True),
@@ -129,7 +130,7 @@ class predict(nn.Module):
 
 
 class Yolov5(nn.Module):
-    def __init__(self, config: list ,n_channels=3, num_classes=80):
+    def __init__(self, config: list ,n_channels=3, num_classes=config.NUM_CLASSES):
         super(Yolov5, self).__init__()
         self.config=config
         self.n_channels=n_channels
@@ -182,7 +183,7 @@ class Yolov5(nn.Module):
                     blocks.append(nn.Upsample(scale_factor=2),)
                     in_channels = in_channels * 2
                 elif module == "P":
-                    blocks.append(predict(in_channels=in_channels, num_classes=num_classes))
+                    blocks.append(predict(in_channels=in_channels, num_classes=self.num_classes))
         return nn.Sequential(*blocks)
 
 
