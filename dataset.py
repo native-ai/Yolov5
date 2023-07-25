@@ -42,12 +42,10 @@ class YOLODataset(Dataset):
         return len(self.annotations)
 
     def __getitem__(self, index):
-        label_path = os.path.join(self.label_dir, str(index)+ ".txt")
+        label_path = os.path.join(self.label_dir, self.annotations[index][:-4] + ".txt")
         bboxes = np.roll(np.loadtxt(fname=label_path, delimiter=" ", ndmin=2), 4, axis=1).tolist()
         img_path = os.path.join(self.img_dir, self.annotations[index])
         image = np.array(Image.open(img_path).convert("RGB"))
-        print(image.shape)
-        print(bboxes)
 
         if self.transform:
             augmentations = self.transform(image=image, bboxes=bboxes)
