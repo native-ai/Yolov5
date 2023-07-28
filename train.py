@@ -7,7 +7,7 @@ import torch
 import torch.optim as optim
 
 from model import Yolov5,config1
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from utils import (
     mean_average_precision,
     cells_to_bboxes,
@@ -22,6 +22,8 @@ from loss import YoloLoss
 import warnings
 warnings.filterwarnings("ignore")
 
+
+#This flag allows you to enable the inbuilt cudnn auto-tuner to find the best algorithm to use for your hardware.
 torch.backends.cudnn.benchmark = True
 
 
@@ -64,9 +66,7 @@ def main():
     loss_fn = YoloLoss()
     scaler = torch.cuda.amp.GradScaler()
 
-    train_loader, test_loader, train_eval_loader = get_loaders(
-        train_csv_path=config.DATASET + "/train.csv", test_csv_path=config.DATASET + "/test.csv"
-    )
+    train_loader, test_loader, train_eval_loader = get_loaders()
 
     if config.LOAD_MODEL:
         load_checkpoint(

@@ -192,7 +192,7 @@ if __name__ == "__main__":
     IMAGE_SIZE = 640
     # Usage example:
     import time
-    Yv5 =Yolov5(config=config,num_classes=num_classes).to(DEVICE)
+    Yv5 =Yolov5(config=config1,num_classes=num_classes).to(DEVICE)
     x = torch.randn((2, 3, IMAGE_SIZE, IMAGE_SIZE)).to(DEVICE)
     s=time.perf_counter()
     out = Yv5(x)
