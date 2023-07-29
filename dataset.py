@@ -105,8 +105,6 @@ class YOLODataset(Dataset):
                 width = max_x - min_x
                 height = max_y - min_y
 
-                # Return the YOLO bbox annotation string
-                print(f"{x_center:.6f} {y_center:.6f} {width:.6f} {height:.6f}")
                 data.append([x_center,y_center,width,height,className])
         return data
 
