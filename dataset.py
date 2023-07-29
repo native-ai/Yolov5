@@ -43,7 +43,7 @@ class YOLODataset(Dataset):
 
     def __getitem__(self, index):
         label_path = os.path.join(self.label_dir, self.annotations[index][:-4] + ".txt")
-        bboxes = np.roll(np.loadtxt(fname=label_path, delimiter=" ", ndmin=2), 4, axis=1).tolist()
+        bboxes =  self._convert_polygon_to_yolo_bbox(file_path=label_path)
         img_path = os.path.join(self.img_dir, self.annotations[index])
         image = np.array(Image.open(img_path).convert("RGB"))
 
@@ -84,6 +84,31 @@ class YOLODataset(Dataset):
 
         return image, tuple(targets)
 
+    def _convert_polygon_to_yolo_bbox(self,file_path):
+        data = []
+
+        # Step 1: Read the text file line by line
+        with open(file_path, 'r') as file:
+            for line in file:
+                # Step 2: Split each line into individual elements
+                elements = line.strip().split()
+                # Step 3: Convert the elements into numerical values (if needed)
+                numerical_elements = [float(element) for element in elements]  # Convert to float, change data type if needed
+
+                className,polygon_vertices = numerical_elements[0],numerical_elements[1:]
+                min_x, min_y = min(polygon_vertices[::2]), min(polygon_vertices[1::2])
+                max_x, max_y = max(polygon_vertices[::2]), max(polygon_vertices[1::2])
+
+                # Calculate bounding box parameters
+                x_center = (min_x + max_x) / 2.0
+                y_center = (min_y + max_y) / 2.0
+                width = max_x - min_x
+                height = max_y - min_y
+
+                # Return the YOLO bbox annotation string
+                print(f"{x_center:.6f} {y_center:.6f} {width:.6f} {height:.6f}")
+                data.append([x_center,y_center,width,height,className])
+        return data
 
 def test():
     anchors = config.ANCHORS
