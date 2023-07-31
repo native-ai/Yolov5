@@ -105,7 +105,7 @@ class YOLODataset(Dataset):
                 width = max_x - min_x
                 height = max_y - min_y
 
-                data.append([x_center,y_center,width,height,className])
+                data.append([x_center,y_center,width,height,int(className)])
         return data
 
 def test():
