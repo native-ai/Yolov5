@@ -8,6 +8,6 @@
 
 
 ### Features
-- [ ] Support Single GPU Training  
+- [X] Support Single GPU Training  
 - [ ] Support Multip GPU Training
 - [ ] Support Pip installation
